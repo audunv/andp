@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title>ANDP: %(title)s</title>
+  </head>
+  <body>
+    <h1>%(title)s</h1>
+
+    <p>
+      %(message)s Click <em>Done</em> when finished.
+    </p>
+
+    <form method="post" action="">
+      <table>
+	<tr>
+	  <th>Available</th>
+	  <td></td>
+	  <th>Enabled</th>
+	</tr>
+	<tr>
+	  <td>
+	    <select name="available" size="20" style="width: 24em;">
+	      %(available)s
+	    </select>
+	  </td>
+	  <td>
+	    <input type="submit" name="add" value="Add >>>" style="width: 12em;" />
+	    <br/>
+	    <input type="submit" name="remove" value="<<< Remove" style="width: 12em;" />
+	    <br/>
+	    <br/>
+	    <input type="submit" name="done" value="Done" style="width: 12em;" />
+	  </td>
+	  <td>
+	    <select name="enabled" size="20" style="width: 24em;">
+	      %(enabled)s
+	    </select>
+	  </td>
+	</tr>
+      </table>
+    </form>
+  </body>
+</html>

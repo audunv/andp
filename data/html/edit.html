@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <title>ANDP: %(pageTitle)s</title>
+  </head>
+  <body>
+    <h1>%(pageTitle)s</h1>
+
+    <form action="edit" method="post">
+      <table class="thRight">
+	<tr>
+	  <th>Channel:</th>
+	  <td>
+	    %(channel)s
+	    <span class="error">%(channel_errmsg)s</span>
+	  </td>
+	</tr>
+	<tr>
+	  <th>Start time:</th>
+	  <td>
+	    %(startTime)s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%(startDate)s
+	    <span class="error">%(startTime_errmsg)s</span>
+	  </td>
+	</tr>
+	<tr>
+	  <th>End time:</th>
+	  <td>
+	    %(endTime)s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%(endDate)s
+	    <span class="error">%(endTime_errmsg)s</span>
+	  </td>
+	</tr>
+	<tr>
+	  <th>Type:</th>
+	  <td>
+	    %(bType)s
+	  </td>
+	</tr>
+	<tr>
+	  <th>Title:</th>
+	  <td>
+	    %(title)s
+	    <span class="error">%(title_errmsg)s</span>
+	  </td>
+	</tr>
+        <!-- Implement later
+	<tr>
+	  <th>Description:</th>
+	  <td>
+	    %(description)s
+	  </td>
+	</tr>
+        -->
+	<tr>
+	  <td></td>
+	  <td>
+	    <input type="submit" name="book" value="Book it" />
+	    <input type="submit" name="cancel" value="Cancel" />
+	    <input type="hidden" name="bID" value="%(bID)s" />
+	  </td>
+	</tr>
+      </table>
+    </form>
+  </body>
+</html>

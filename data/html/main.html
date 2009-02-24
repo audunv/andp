@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>ANDP: Bookings</title>
+  </head>
+  <body>
+    <h1>Bookings</h1>
+
+    <p>
+      Welcome! Use this page to book a new broadcast or recording (by
+      clicking the button below) or to browse scheduled and current
+      broadcastings/recordings.
+    </p>
+
+    <p>
+      This system can broadcast or record a maximum
+      of <strong><em>%(numSimChannels)s</em></strong> simultaneously.
+    </p>
+
+    <form action="dispatch" method="get">
+      <p>
+	<input type="submit" value="Book broadcast or recording" />
+      </p>
+    </form>
+
+    <hr/>
+
+    <h2>Now playing/recording</h2>
+
+    %(nowPlaying)s
+
+    <hr/>
+
+    <h2>Scheduled</h2>
+
+    %(scheduled)s
+  </body>
+</html>

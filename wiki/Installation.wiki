@@ -2,12 +2,14 @@
 
 = Introduction =
 
-Add your content here.
+ANDP has not yet been widely deployed, and documentation is still sparse. It does, however, work quite well under controlled circumstances on Ubuntu 7.10.
 
+This pages briefly summarises which packages to install and which configuration files to change.
 
-= Details =
+Please be careful when using ANDP. Contributions are very welcome, especially in the are of documentation.
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+= What you need =
+
+You will need the following:
+
+  * A computer running 

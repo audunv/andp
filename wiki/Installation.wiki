@@ -19,7 +19,7 @@ Install the following packages and their dependencies (e.g. using apt-get):
 
 = Installing ANDP =
 
-Pre-compiled versions of ANDP are currently not available. Instead download the source code, as described on [http://code.google.com/p/andp/source/checkout|the project page].
+Pre-compiled versions of ANDP are currently not available. Instead download the source code, as described on [http://code.google.com/p/andp/source/checkout the project page].
 
 The examples below assume that ANDP has been placed within '/usr/local/andp'.
 
@@ -28,8 +28,8 @@ The examples below assume that ANDP has been placed within '/usr/local/andp'.
 Enable the required Apache modules:
 
 {{{
-  sudo a2enmod mod_python
-  sudo a2enmod rewrite
+sudo a2enmod mod_python
+sudo a2enmod rewrite
 }}}
 
 Your '/etc/apache2/sites-available/default' file should look something like this:

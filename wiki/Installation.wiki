@@ -27,8 +27,10 @@ The examples below assume that ANDP has been placed within '/usr/local/andp'.
 
 Enable the required Apache modules:
 
+{{{
   sudo a2enmod mod_python
   sudo a2enmod rewrite
+}}}
 
 Your '/etc/apache2/sites-available/default' file should look something like this:
 

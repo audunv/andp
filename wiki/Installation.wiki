@@ -15,6 +15,7 @@ Install the following packages and their dependencies (e.g. using apt-get):
   * apache2
   * libapache2-mod-python
   * python-psycopg2
+  * plpythonu ***
 
 = Installing ANDP =
 
@@ -29,7 +30,7 @@ Enable the required Apache modules:
   sudo a2enmod mod_python
   sudo a2enmod rewrite
 
-Edit the relevant Apache configuration file. Your '/etc/apache2/sites-available/default' file should look something like this:
+Your '/etc/apache2/sites-available/default' file should look something like this:
 
   NameVirtualHost *:80
   <VirtualHost *:80>
@@ -86,3 +87,26 @@ Edit the relevant Apache configuration file. Your '/etc/apache2/sites-available/
     CustomLog /var/log/apache2/access.log combined
     ServerSignature Off
   </VirtualHost>
+
+= Creating the Postgres database =
+
+Create the database by running the '/usr/local/andp/db/create_database.sh' script.
+
+= Configuring ANDP itself =
+
+ANDP has its own configuration file. It's easiest to begin by copying the included sample:
+
+  cd /usr/local/andp/config
+  cp template.cfg tv.cfg
+
+Open 'tv.cfg' with your favorite editor. Please see the comments in the file for further details.
+
+= Adding cron jobs =
+
+ANDP uses cron to initate recordings. Add the following line to www-data's crontab (e.g. by running 'sudo crontab -e -u www-data'):
+
+  * * * * * /usr/local/andp/python/scripts/cron_min.py /usr/local/andp/config/tv.cfg
+
+= Configuring your Dreambox(es) =
+
+ANDP supports an unlimited number of Dreamboxes. Make sure their web administration interface has been turned on, and that you the password on each Dreambox is the same as you entered in ANDP's configuration file.

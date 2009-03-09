@@ -21,7 +21,7 @@ Install the following packages and their dependencies (e.g. using apt-get):
 
 Pre-compiled versions of ANDP are currently not available. Instead download the source code, as described on [http://code.google.com/p/andp/source/checkout the project page].
 
-The examples below assume that ANDP has been placed within {/usr/local/andp}.
+The examples below assume that ANDP has been placed within {{{/usr/local/andp}}}.
 
 = Configuring Apache =
 
@@ -32,7 +32,7 @@ sudo a2enmod mod_python
 sudo a2enmod rewrite
 }}}
 
-Your {/etc/apache2/sites-available/default} file should look something like this:
+Your {{{/etc/apache2/sites-available/default}}} file should look something like this:
 
 {{{
 NameVirtualHost *:80
@@ -94,7 +94,7 @@ NameVirtualHost *:80
 
 = Creating the Postgres database =
 
-Create the database by running the {/usr/local/andp/db/create_database.sh} script.
+Create the database by running the {{{/usr/local/andp/db/create_database.sh}}} script.
 
 = Configuring ANDP itself =
 
@@ -109,7 +109,7 @@ Open 'tv.cfg' with your favorite editor. Please see the comments in the file for
 
 = Adding cron jobs =
 
-ANDP uses cron to initate recordings. Add the following line to www-data's crontab (e.g. by running {sudo crontab -e -u www-data}):
+ANDP uses cron to initate recordings. Add the following line to www-data's crontab (e.g. by running {{{sudo crontab -e -u www-data}}}):
 
 {{{
 * * * * * /usr/local/andp/python/scripts/cron_min.py /usr/local/andp/config/tv.cfg

@@ -100,8 +100,10 @@ Create the database by running the '/usr/local/andp/db/create_database.sh' scrip
 
 ANDP has its own configuration file. It's easiest to begin by copying the included sample:
 
-  cd /usr/local/andp/config
-  cp template.cfg tv.cfg
+{{{
+cd /usr/local/andp/config
+cp template.cfg tv.cfg
+}}}
 
 Open 'tv.cfg' with your favorite editor. Please see the comments in the file for further details.
 
@@ -109,7 +111,9 @@ Open 'tv.cfg' with your favorite editor. Please see the comments in the file for
 
 ANDP uses cron to initate recordings. Add the following line to www-data's crontab (e.g. by running 'sudo crontab -e -u www-data'):
 
-  * * * * * /usr/local/andp/python/scripts/cron_min.py /usr/local/andp/config/tv.cfg
+{{{
+* * * * * /usr/local/andp/python/scripts/cron_min.py /usr/local/andp/config/tv.cfg
+}}}
 
 = Configuring your Dreambox(es) =
 

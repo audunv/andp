@@ -1,4 +1,4 @@
-#summary How to configure ANDP and which other components to install
+#summary How to configure ANDP, and which other components to install
 
 = Introduction =
 
@@ -15,7 +15,7 @@ Install the following packages and their dependencies (e.g. using apt-get):
   * apache2
   * libapache2-mod-python
   * python-psycopg2
-  * plpythonu ***
+  * postgresql-plpython
 
 = Installing ANDP =
 

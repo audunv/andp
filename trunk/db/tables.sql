@@ -79,7 +79,7 @@ create table Bookings (
   tunerID      varchar(64) references Tuners, -- allocated tuner
   record       boolean default 'f', -- true if program should be recorded to disk
   state	       char(1) check(state = 'e' or state = 'f' or state = 'i' or state = 'w') not null default 'w',
-  notice       varchar(1024), -- optional notice to show to user (e.g. error message)
+  notice       varchar(16384), -- optional notice to show to user (e.g. error message)
   title	       varchar(64) not null, -- user's booking title
   description  varchar(512), -- user's description
   username     varchar(16) not null references Users, -- username

@@ -179,7 +179,7 @@ class Booking(object):
         """
 
         if notice:
-            PsE(cursor, "update Bookings set state=%s, notice=%s where id=%s", (newState, notice, self.id))
+            PsE(cursor, "update Bookings set state=%s, notice=%s where id=%s", (newState, notice[:16384], self.id))
         else:
             PsE(cursor, "update Bookings set state=%s where id=%s", (newState, self.id))
 

@@ -104,7 +104,7 @@ class Tuner(object):
         # raise an exception.
         for i in xrange(0, 10): # Try up to ten times (sleeping 1 second between attempts)
             urllib2.urlopen("http://%s/body?mode=controlScreenShot" % self.host).read()
-            bmp = urllib2.urlopen("http://%s/root/tmp/screenshot.bmp" % self.host).read()
+            bmp = urllib2.urlopen("http://%s/root/tmp/screenshot.jpg" % self.host).read()
             entropy = float(len(zlib.compress(bmp))) / len(bmp)
 
             #print entropy

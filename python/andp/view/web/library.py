@@ -136,7 +136,7 @@ class M3U(Page):
             tuner = andp.model.tuners.GetTuner(self.req.cursor, self.req.config, booking.tunerID)
 #            m3u += 'rtp://%s.%s@%s\n' % (self.req.config["network"]["host"], self.req.config["network"]["domain"], tuner.mcGroup)
 #            m3u += 'rtp://@%s:1234\n' % (tuner.mcGroup)
-            m3u += 'rtp://tv.hiof.no@%s:1234\n' % (tuner.mcGroup)
+            m3u += 'rtp://%s:1234\n' % (tuner.mcGroup)
         
         self.SendHeader(contentType = "application/x-mpegurl")
         #self.SendHeader(contentType = "text/plain")

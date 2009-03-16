@@ -36,6 +36,7 @@ from andp.db import PsE
 # Screenshots with an entropy smaller than this will be assumed to
 # indicate decryption problems
 ENTROPY_LIMIT = 0.002
+MINIMUM_SIZE  = 8000
 
 class Tuner(object):
     def __init__(self, host, password, mcGroup):
@@ -102,20 +103,29 @@ class Tuner(object):
         # need to check for an image.  If image is uniformly black (and
         # thus very compressible) we'll assume decryption problems and
         # raise an exception.
+        time.sleep(5)
         for i in xrange(0, 10): # Try up to ten times (sleeping 1 second between attempts)
             urllib2.urlopen("http://%s/body?mode=controlScreenShot" % self.host).read()
             bmp = urllib2.urlopen("http://%s/root/tmp/screenshot.jpg" % self.host).read()
-            entropy = float(len(zlib.compress(bmp))) / len(bmp)
+
+            #entropy = float(len(zlib.compress(bmp))) / len(bmp)
 
             #print entropy
 
-            if entropy >= ENTROPY_LIMIT:
-                break
+            #if entropy >= ENTROPY_LIMIT:
+            #    break
 
+            open("/tmp/cam.txt", "a").write("Len of screenshot: %s" % len(bmp))
+            open("/tmp/screen.jpg", "w").write(bmp)
+
+            if len(bmp) > MINIMUM_SIZE:
+                break
+            
             time.sleep(1)
             
         # Entropy of a blank image seems to be around 0.001
-        if entropy < ENTROPY_LIMIT:
+        #        if entropy < ENTROPY_LIMIT:
+        if len(bmp) < MINIMUM_SIZE:
             raise andp.exceptions.TuningError, "Unable to decrypt channel. Check CAM and subscription."
 
 class Channel(object):

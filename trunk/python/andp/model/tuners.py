@@ -94,7 +94,7 @@ class Tuner(object):
 
         # If channel name is "-1", DreamBox probably received invalid
         # parameters
-        channelName = urllib2.urlopen("http://%s/channels/getcurrent" % self.host).read()
+        channelName = urllib2.urlopen("http://%s/channels/getcurrent" % self.host).read() 
         if channelName == "-1":
             raise andp.exceptions.TuningError, "Unable to tune to channel. Check parameters and signal."
 

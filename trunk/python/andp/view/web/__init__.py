@@ -573,6 +573,7 @@ class Page(object):
 
         d["tab_bookings"] = ""
         d["tab_library"] = ""
+        d["tab_help"] = ""
 
         if self.user and self.user.admin:
             d["tab_admin"] = ' style="display: block;"'
@@ -585,6 +586,8 @@ class Page(object):
             d["tab_library"] = cur
         elif self.req.uri.startswith("/admin/"):
             d["tab_admin"] += cur
+        elif self.req.uri.startswith("/help/"):
+            d["tab_help"] += cur
         else:
             d["tab_bookings"] = cur
 

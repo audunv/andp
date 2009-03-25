@@ -64,6 +64,12 @@ create table TunerChannels (
   primary key(tunerID, channelID)
 );
 
+-- IP-based channels
+create table IPChannels (
+  uri varchar(512) primary key,  -- URI understandable by VLC
+  name varchar(64) not null     -- name to display to users
+);
+
 -- Booking states:
 --   e: error
 --   f: finished
@@ -75,8 +81,9 @@ create table Bookings (
   id char(32)  primary key default RandomHexString(32),
   startTime    timestamp with time zone not null,
   endTime      timestamp with time zone not null,
-  channelID    varchar(64) references channels, -- longest seen so far was 34
+  channelID    varchar(64) references Channels, -- longest seen so far was 34
   tunerID      varchar(64) references Tuners, -- allocated tuner
+  ipURI        varchar(512) references IPChannels,
   record       boolean default 'f', -- true if program should be recorded to disk
   state	       char(1) check(state = 'e' or state = 'f' or state = 'i' or state = 'w') not null default 'w',
   notice       varchar(16384), -- optional notice to show to user (e.g. error message)
@@ -93,7 +100,7 @@ create table Bookings (
   check (startTime < endTime),
   check (endTime > current_timestamp or state='f' or state='e'),
   check (endTime - startTime < '12 hours'::interval),
-  check (tunerID is not null or state='e' or state='f')
+  check (tunerID is not null or state='e' or state='f' or ipURI is not null)
 );
 
 -- tuner ID, start time, end time, booking id

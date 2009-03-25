@@ -128,12 +128,26 @@ class Tuner(object):
         if len(bmp) < MINIMUM_SIZE:
             raise andp.exceptions.TuningError, "Unable to decrypt channel. Check CAM and subscription."
 
-class Channel(object):
+class BaseChannel(object):
+    "Base class for all channels. Name is due to historical reasons"
+    def __init__(self, name):
+        self.name = name
+
+class Channel(BaseChannel):
+    "Dreambox-based channels"
     def __init__(self, cID, name, provider, enabled):
+        BaseChannel.__init__(self, name)
+        
         self.id       = cID
-        self.name     = name
         self.provider = provider
         self.enabled  = enabled
+
+class IPChannel(BaseChannel):
+    "Streamed channels (from any URI understood by VLC)"
+    def __init__(self, uri, name):
+        BaseChannel.__init__(self, name)
+
+        self.uri = uri
 
 def GetTuner(cursor, cfg, tunerID):
     """

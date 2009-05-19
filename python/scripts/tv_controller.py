@@ -18,7 +18,7 @@ port = 9519
 # End of configuration
 ########################################################################
 
-import SocketServer, sys, time, subprocess, os
+import SocketServer, sys, time, subprocess, socket, os
 
 class TVControlServer(SocketServer.TCPServer):
     allow_reuse_address = True
@@ -28,9 +28,9 @@ class TVControlServer(SocketServer.TCPServer):
     def StartVLC(self):
         "For starting or restarting VLC"
 
-        cmd = ('/Applications/VLC.app/Contents/MacOS/VLC', '--extraintf=rc', '-vvv', '--rc-unix=%s' % self.vlcSocketPath)
+        cmd = ('/Applications/VLC.app/Contents/MacOS/VLC', '-q', '--extraintf=rc', '-vvv', '--rc-unix=%s' % self.vlcSocketPath)
 
-        self.vlcProc = subprocess.Popen(cmd, stderr = subprocess.PIPE) #, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        self.vlcProc = subprocess.Popen(cmd, stderr = subprocess.PIPE)
 
     def ShowVLC(self, visible = True):
         "To show or hide VLC's GUI"
@@ -45,7 +45,15 @@ class TVControlServer(SocketServer.TCPServer):
         stdout, stderr = proc.communicate('tell application "System Events"\nset visible of process "VLC" to %s\nend tell\n' % visibleString)
 
     def SendVLCCommand(self, command):
-        f = 1
+        if not os.path.exists(self.vlcSocketPath):
+            self.StartVLC()
+            self.ShowVLC(False)
+        
+        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        s.connect(self.vlcSocketPath)
+
+        s.send(command)
+        #return s.recvfrom(1024)
 
     def __init__(self, address, handler):
         SocketServer.TCPServer.__init__(self, address, handler)
@@ -70,11 +78,13 @@ class TVControlHandler(SocketServer.StreamRequestHandler):
 
         # Handle custom commands for showing or hiding VLC's UI
         if command == "tv.show":
-            self.server.ShowVLC()
+            reply = self.server.ShowVLC()
         elif command == "tv.hide":
-            self.server.ShowVLC(False)
+            reply = self.server.ShowVLC(False)
         else:
-            pass
+            reply = self.server.SendVLCCommand(command)
+
+        self.wfile.write(reply)
 
 def Main():
     server = TVControlServer((host, port), TVControlHandler)

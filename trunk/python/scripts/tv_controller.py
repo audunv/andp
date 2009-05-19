@@ -29,22 +29,23 @@ class TVControlServer(SocketServer.TCPServer):
         cmd = ('/Applications/VLC.app/Contents/MacOS/VLC', '--extraintf=rc', '--rc-unix=/tmp/.tvcontrol')
         self.vlcProc = subprocess.Popen(cmd, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 
-    def HideVLC(self):
-        "To hide VLC's GUI"
+    def ShowVLC(self, visible = True):
+        "To show or hide VLC's GUI"
+
+        if visible:
+            visibleString = "true"
+        else:
+            visibleString = "false"
 
         cmd = ('osascript')
         proc = subprocess.Popen(cmd, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-        stdout, stderr = proc.communicate('tell application "System Events"\nset visible of process "VLC" to false\nend tell\n')
-
-        #print stdout
-        #print stderr
+        stdout, stderr = proc.communicate('tell application "System Events"\nset visible of process "VLC" to %s\nend tell\n' % visibleString)
 
     def __init__(self, address, handler):
         SocketServer.TCPServer.__init__(self, address, handler)
 
         self.StartVLC()
-        #time.sleep(1)
-        self.HideVLC()
+        self.ShowVLC(False)
 
     def verify_request(self, req, client_address):
         if client_address[0] in authorizedIPs:
@@ -60,6 +61,14 @@ class TVControlHandler(SocketServer.StreamRequestHandler):
         now = time.time()
         nowS = time.strftime("%Y-%m-%d %H:%M:%S Z", time.gmtime(now))
         sys.stderr.write("-------- %s, from %s --------\n%s\n" % (nowS, self.client_address[0], command))
+
+        # Handle custom commands for showing or hiding VLC's UI
+        if command == "tv.show":
+            self.server.ShowVLC()
+        elif command == "tv.hide":
+            self.server.ShowVLC(False)
+        else:
+            pass
 
 def Main():
     server = TVControlServer((host, port), TVControlHandler)

@@ -18,16 +18,19 @@ port = 9519
 # End of configuration
 ########################################################################
 
-import SocketServer, sys, time, subprocess
+import SocketServer, sys, time, subprocess, os
 
 class TVControlServer(SocketServer.TCPServer):
     allow_reuse_address = True
 
+    vlcSocketPath = '/tmp/.tvcontrol'
+
     def StartVLC(self):
         "For starting or restarting VLC"
 
-        cmd = ('/Applications/VLC.app/Contents/MacOS/VLC', '--extraintf=rc', '--rc-unix=/tmp/.tvcontrol')
-        self.vlcProc = subprocess.Popen(cmd, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        cmd = ('/Applications/VLC.app/Contents/MacOS/VLC', '--extraintf=rc', '-vvv', '--rc-unix=%s' % self.vlcSocketPath)
+
+        self.vlcProc = subprocess.Popen(cmd, stderr = subprocess.PIPE) #, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 
     def ShowVLC(self, visible = True):
         "To show or hide VLC's GUI"
@@ -40,6 +43,9 @@ class TVControlServer(SocketServer.TCPServer):
         cmd = ('osascript')
         proc = subprocess.Popen(cmd, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
         stdout, stderr = proc.communicate('tell application "System Events"\nset visible of process "VLC" to %s\nend tell\n' % visibleString)
+
+    def SendVLCCommand(self, command):
+        f = 1
 
     def __init__(self, address, handler):
         SocketServer.TCPServer.__init__(self, address, handler)

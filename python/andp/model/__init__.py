@@ -53,16 +53,16 @@ def ValidEmailAddress(s):
 
     return True
 
-def RandomHexString(i):
+def RandomHexString(sl):
     """
 
     Returns a random string of hexadecimal characters with length i
 
     """
 
-    return "".join([random.choice("0123456789abcdef") for i in xrange(i)])
+    return "".join([random.choice("0123456789abcdef") for i in xrange(sl)])
 
-def RandomReadableString(i):
+def RandomReadableString(sl):
     """
 
     Returns a random string of letters and digits with length
@@ -70,7 +70,15 @@ def RandomReadableString(i):
 
     """
 
-    return "".join([random.choice("abcdefghjkmnpqrstuvwxyz23456789") for i in xrange(i)])
+    # Make sure string contains at least one digit, to avoid embarassing words
+    P = re.compile(r'[a-z]*[0-9]+[a-z]*')
+
+    while True:
+        s = "".join([random.choice("abcdefghjkmnpqrstuvwxyz23456789") for i in xrange(sl)])
+        if P.search(s):
+            break
+        
+    return s
 
 def MXDateTimeToDateTime(mdt):
     """

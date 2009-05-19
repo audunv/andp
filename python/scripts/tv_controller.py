@@ -53,7 +53,6 @@ class TVControlServer(SocketServer.TCPServer):
         s.connect(self.vlcSocketPath)
 
         s.send(command)
-        #return s.recvfrom(1024)
 
     def __init__(self, address, handler):
         SocketServer.TCPServer.__init__(self, address, handler)
@@ -78,13 +77,11 @@ class TVControlHandler(SocketServer.StreamRequestHandler):
 
         # Handle custom commands for showing or hiding VLC's UI
         if command == "tv.show":
-            reply = self.server.ShowVLC()
+            self.server.ShowVLC()
         elif command == "tv.hide":
-            reply = self.server.ShowVLC(False)
+            self.server.ShowVLC(False)
         else:
-            reply = self.server.SendVLCCommand(command)
-
-        self.wfile.write(reply)
+            self.server.SendVLCCommand(command)
 
 def Main():
     server = TVControlServer((host, port), TVControlHandler)

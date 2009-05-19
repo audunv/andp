@@ -23,6 +23,13 @@ returns char as
 'import andp.model; return andp.model.RandomHexString(args[0])'
 language plpythonu;
 
+-- Create easily readable string of arbitrary length (letters, digits,
+-- no i, l, o, 1, 0)
+create function RandomReadableString(int)
+returns char as
+'import andp.model; return andp.model.RandomReadableString(args[0])'
+language plpythonu;
+
 -- Users. Since we can't look up these details every time (for
 -- performance reasons and since we'd need passwords) they are
 -- cached here every time user logs on
@@ -101,6 +108,13 @@ create table Bookings (
   check (endTime > current_timestamp or state='f' or state='e'),
   check (endTime - startTime < '12 hours'::interval),
   check (tunerID is not null or state='e' or state='f' or ipURI is not null)
+);
+
+-- TV sessions (used when remotely controlling TVs)
+create table TVSessions (
+  code      char(4) primary key default RandomReadableString(4), -- Displayed on screens for authorization
+  startTime timestamp with time zone not null default current_timestamp, -- Start of validity period
+  host      varchar(64) not null -- Host name or IP
 );
 
 -- tuner ID, start time, end time, booking id

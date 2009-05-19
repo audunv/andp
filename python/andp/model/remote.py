@@ -40,17 +40,32 @@ import andp.exceptions
 
 from andp.db import PsE
 
-def RegisterClient(cursor, host):
+def RegisterClient(req, host):
     # Delete all expired sessions
-    PsE(cursor, "delete from TVSessions where current_timestamp - startTime > %s", (SESSION_LENGTH,))
+    PsE(req.cursor, "delete from TVSessions where current_timestamp - startTime > %s", (SESSION_LENGTH,))
 
     # Find youngest 
-    PsE(cursor, "select min(current_timestamp - startTime) from TVSessions where host=%s", (host,))
-    delta = cursor.fetchone()[0]
+    PsE(req.cursor, "select min(current_timestamp - startTime) from TVSessions where host=%s", (host,))
+    delta = req.cursor.fetchone()[0]
 
     # Create new session if host is unknown or has entered grace period
     if delta == None or delta > SESSION_LENGTH - GRACE_PERIOD:
-        PsE(cursor, "insert into TVSessions (host) values (%s)", (host,))
+        PsE(req.cursor, "insert into TVSessions (host) values (%s)", (host,))
 
-def QRForHost(cursor, host):
-    return "Foo"
+def QRForHost(req, host):
+    PsE(req.cursor, "select code from TVSessions where host=%s", (host,))
+    uri = "http://%s.%s/%s" % (req.config["network"]["host"], req.config["network"]["domain"], req.cursor.fetchone()[0])
+
+    return uri
+
+def HostBySession(req, sessionID):
+    "Returns host name (or IP) if session is know, otherwise None"
+    
+    PsE(req.cursor, "select host from TVSessions where code=%s and current_timestamp - startTime < %s", (sessionID, SESSION_LENGTH))
+    res = req.cursor.fetchone()
+
+    if res:
+        return res[0]
+    else:
+        return None
+    

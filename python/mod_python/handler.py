@@ -20,7 +20,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 # 02111-1307, USA.
 
-import time, sys
+import time, sys, re
 
 import psycopg2
 
@@ -43,6 +43,8 @@ from andp.view.web.remote   import *
 cfg = None
 
 dbConnection = None
+
+REMOTE_PATTERN = re.compile(r'^/[a-z0-9]{4}$')
 
 def handler(req):
     remoteHost = req.get_remote_host(apache.REMOTE_NOLOOKUP)
@@ -96,6 +98,15 @@ def handler(req):
     elif req.uri.startswith("/library2/"):
         try:
             res = Library2(req)()
+        except:
+            req.conn.rollback()
+            raise
+        else:
+            req.conn.commit()
+            return res
+    elif REMOTE_PATTERN.search(req.uri):
+        try:
+            res = RemoteRemote(req)()
         except:
             req.conn.rollback()
             raise

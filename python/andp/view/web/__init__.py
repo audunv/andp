@@ -27,7 +27,7 @@ interface
 
 """
 
-__all__ = ["auth", "bookings", "library", "admin", "widgets"]
+__all__ = ["auth", "bookings", "library", "admin", "widgets", "remote"]
 
 import re, os, time, urllib, socket
 

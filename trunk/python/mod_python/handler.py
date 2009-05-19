@@ -36,6 +36,7 @@ from andp.view.web.bookings import *
 from andp.view.web.library  import *
 from andp.view.web.admin    import *
 from andp.view.web.help     import *
+from andp.view.web.remote   import *
 
 # cfg depends on the configuration path, which won't be known before
 # we receive our first request.

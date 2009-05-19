@@ -27,7 +27,7 @@ directly with the database.
 
 """
 
-__all__ = ["users", "tuners", "bookings"]
+__all__ = ["users", "tuners", "bookings", "remote"]
 
 import re, random, datetime
 

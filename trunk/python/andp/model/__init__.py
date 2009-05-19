@@ -56,11 +56,21 @@ def ValidEmailAddress(s):
 def RandomHexString(i):
     """
 
-    Returns a random string of hexadecimal characters of length i
+    Returns a random string of hexadecimal characters with length i
 
     """
 
     return "".join([random.choice("0123456789abcdef") for i in xrange(i)])
+
+def RandomReadableString(i):
+    """
+
+    Returns a random string of letters and digits with length
+    i. String does not include characters which are easily confused
+
+    """
+
+    return "".join([random.choice("abcdefghjkmnpqrstuvwxyz23456789") for i in xrange(i)])
 
 def MXDateTimeToDateTime(mdt):
     """

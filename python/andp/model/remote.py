@@ -52,13 +52,20 @@ def RegisterClient(req, host):
     if delta == None or delta > SESSION_LENGTH - GRACE_PERIOD:
         PsE(req.cursor, "insert into TVSessions (host) values (%s)", (host,))
 
-def QRForHost(req, host):
+def SessionIDForHost(req, host):
+    # Return session ID if available, otherwise None
+    
     PsE(req.cursor, "select code from TVSessions where host=%s", (host,))
-    uri = "http://%s.%s/%s" % (req.config["network"]["host"], req.config["network"]["domain"], req.cursor.fetchone()[0])
+    #uri = "http://%s.%s/%s" % (req.config["network"]["host"], req.config["network"]["domain"], req.cursor.fetchone()[0])
 
-    return uri
+    try:
+        sessionID = req.cursor.fetchone()[0]
+    except TypeError:
+        sessionID = None
 
-def HostBySession(req, sessionID):
+    return sessionID
+
+def HostBySessionID(req, sessionID):
     "Returns host name (or IP) if session is know, otherwise None"
     
     PsE(req.cursor, "select host from TVSessions where code=%s and current_timestamp - startTime < %s", (sessionID, SESSION_LENGTH))

@@ -147,9 +147,11 @@ class BookingsWatch(Page):
     path = "/watch"
 
     def GetRealTimeHTML(self, booking):
-        tuner = andp.model.tuners.GetTuner(self.req.cursor, self.req.config, booking.tunerID)
-#        url = 'rtp://%s.%s@%s' % (self.req.config["network"]["host"], self.req.config["network"]["domain"], tuner.mcGroup)
-        url = 'rtp://@%s:1234' % (tuner.mcGroup)
+        if isinstance(booking.channel, andp.model.tuners.Channel):
+            tuner = andp.model.tuners.GetTuner(self.req.cursor, self.req.config, booking.tunerID)
+            url = 'rtp://@%s:1234' % (tuner.mcGroup)
+        else:
+            url = booking.channel.id
 
         return '<p><strong>Direct URL:</strong>&nbsp;&nbsp;&nbsp; %s &nbsp;&nbsp;&nbsp;(copy and paste into VLC)</p>' % url
 

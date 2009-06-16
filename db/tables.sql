@@ -150,6 +150,7 @@ grant select, insert, update, delete on FailedLogins to "www-data";
 grant select, insert, update, delete on Sessions to "www-data";
 grant select, insert, update, delete on Tuners to "www-data";
 grant select, insert, update, delete on Channels to "www-data";
+grant select, insert, update, delete on IPChannels to "www-data";
 grant select, insert, update, delete on TunerChannels to "www-data";
 grant select, insert, update, delete on Bookings to "www-data";
 grant select, insert, update, delete on TVSessions to "www-data";

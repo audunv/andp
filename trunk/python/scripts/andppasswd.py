@@ -37,7 +37,7 @@ if __name__ == "__main__":
     filepath = sys.argv[1]
     username = sys.argv[2]
     email = sys.argv[3]
-    fullName = unicode("".join(sys.argv[4:]), "iso-8859-1")
+    fullName = unicode(sys.argv[4], "iso-8859-1")
 
     passwordSet = False
 

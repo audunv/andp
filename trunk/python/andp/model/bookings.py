@@ -42,7 +42,7 @@ YEAR = "1 YEAR"
 
 
 class Booking(object):
-    def __init__(self, username, bookingID, startTime, endTime, channelID, tunerID, record, title, description, state = None, notice = None):
+    def __init__(self, username, bookingID, startTime, endTime, channel, tunerID, record, title, description, state = None, notice = None):
         """
 
         Booking object
@@ -51,8 +51,8 @@ class Booking(object):
           bookingID:   Booking ID (None for new bookings)
           startTime:   Start date and time (tuple or datetime)
           endTime:     See above
-          channelID:   ID of channel to broadcast/record from
-          tunerID:     Tuner ID (None to allocate automatically)
+          channel:     Channel to broadcast/record from
+          tunerID:     Tuner ID (None to allocate automatically; ignored for IP channels)
           record:      True if programme should be recorded as well as broadcast
           title:       User's booking title
           description: User's description of booking
@@ -71,12 +71,14 @@ class Booking(object):
         #if type(endTime) == tuple:
         #    year, month, day, hour, mint, sec = endTime
         #    endTime = datetime.datetime(year, month, day, hour, mint, sec)
+
+        assert isinstance(channel, andp.model.tuners.BaseChannel)
         
         self.username    = username
         self.id          = bookingID
         self.startTime   = startTime
         self.endTime     = endTime
-        self.channelID   = channelID
+        self.channel     = channel
         self.tunerID     = tunerID
         self.record      = record
         self.title       = title
@@ -104,18 +106,30 @@ class Booking(object):
         if self.id and cursor.fetchone()[0] != 'w':
             raise andp.exceptions.NoLongerEditable
 
-        # Always reallocate tuner
-        self.tunerID = andp.model.tuners.GetAvailableTuners(cursor, self.channelID, self.startTime, self.endTime, self.id)[0]
-
-        if not self.tunerID:
-            raise andp.exceptions.NoTunersAvailable
+        if isinstance(self.channel, andp.model.tuners.Channel):
+            # Always reallocate tuner for satellite channels
+            self.tunerID = andp.model.tuners.GetAvailableTuners(cursor, self.channel.id, self.startTime, self.endTime, self.id)[0]
+            if not self.tunerID:
+                raise andp.exceptions.NoTunersAvailable
+        else:
+            self.tunerID = None
 
         if not self.id:
             self.id = andp.model.RandomHexString(32)
-
-            PsE(cursor, "insert into bookings (id, username, startTime, endTime, channelID, tunerID, record, title, description) values (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (self.id, self.username, self.startTime, self.endTime, self.channelID, self.tunerID, self.record, self.title, self.description))
+            bookingIsNew = True
         else:
-            PsE(cursor, "update bookings set startTime=%s, endTime=%s, channelID=%s, tunerID=%s, record=%s, title=%s, description=%s where id=%s", (self.startTime, self.endTime, self.channelID, self.tunerID, self.record, self.title, self.description, self.id))
+            bookingIsNew = False
+
+        if isinstance(self.channel, andp.model.tuners.Channel):        
+            if bookingIsNew:
+                PsE(cursor, "insert into bookings (id, username, startTime, endTime, channelID, tunerID, record, title, description) values (%s, %s, %s, %s, %s, %s, %s, %s, %s)", (self.id, self.username, self.startTime, self.endTime, self.channel.id, self.tunerID, self.record, self.title, self.description))
+            else:
+                PsE(cursor, "update bookings set startTime=%s, endTime=%s, channelID=%s, tunerID=%s, record=%s, title=%s, description=%s where id=%s", (self.startTime, self.endTime, self.channel.id, self.tunerID, self.record, self.title, self.description, self.id))
+        else:
+            if bookingIsNew:
+                PsE(cursor, "insert into bookings (id, username, startTime, endTime, ipURI, record, title, description) values (%s, %s, %s, %s, %s, %s, %s, %s)", (self.id, self.username, self.startTime, self.endTime, self.channel.id, self.record, self.title, self.description))
+            else:
+                PsE(cursor, "update bookings set startTime=%s, endTime=%s, ipURI=%s, record=%s, title=%s, description=%s where id=%s", (self.startTime, self.endTime, self.channel.id, self.record, self.title, self.description, self.id))
 
         return self.id
 
@@ -244,11 +258,16 @@ def GetBookingsByInterval(cursor, narrowBy, interval, orderBy = "startTime", ord
 
     bookings = []
 
-    PsE(cursor, "select id, startTime, endTime, channelID, tunerID, record, state, notice, title, description, username from Bookings%s order by %s %s" % (where, orderBy, orderDir))
+    PsE(cursor, "select id, startTime, endTime, channelID, tunerID, ipURI, record, state, notice, title, description, username from Bookings%s order by %s %s" % (where, orderBy, orderDir))
 
-    for bookingID, startTime, endTime, channelID, tunerID, record, state, notice, title, description, username in cursor.fetchall():
-        booking = Booking(username, bookingID, startTime, endTime, channelID, tunerID, record, title, description, state, notice)
-        booking.channel = channels[booking.channelID]
+    for bookingID, startTime, endTime, channelID, tunerID, ipURI, record, state, notice, title, description, username in cursor.fetchall():
+        if channelID:
+            channel = channels[channelID]
+        else:
+            channel = channels[ipURI]
+
+        booking = Booking(username, bookingID, startTime, endTime, channel, tunerID, record, title, description, state, notice)
+
         bookings.append(booking)
 
     return bookings
@@ -260,9 +279,6 @@ def GetBookings(cursor, states = '', orderBy = "startTime", orderDir = "asc"):
 
       states:      Filter by booking state (e, f, i and/or w).
                    Default: All states.
-
-    Bookings also get an extra "channel" attribute containing a
-    Channel object.
     
     """
 
@@ -275,11 +291,16 @@ def GetBookings(cursor, states = '', orderBy = "startTime", orderDir = "asc"):
 
     bookings = []
 
-    PsE(cursor, "select id, startTime, endTime, channelID, tunerID, record, state, notice, title, description, username from Bookings%s order by %s %s" % (where, orderBy, orderDir))
+    PsE(cursor, "select id, startTime, endTime, channelID, tunerID, ipURI, record, state, notice, title, description, username from Bookings%s order by %s %s" % (where, orderBy, orderDir))
 
-    for bookingID, startTime, endTime, channelID, tunerID, record, state, notice, title, description, username in cursor.fetchall():
-        booking = Booking(username, bookingID, startTime, endTime, channelID, tunerID, record, title, description, state, notice)
-        booking.channel = channels[booking.channelID]
+    for bookingID, startTime, endTime, channelID, tunerID, ipURI, record, state, notice, title, description, username in cursor.fetchall():
+        if channelID:
+            channel = channels[channelID]
+        else:
+            channel = channels[ipURI]
+
+        booking = Booking(username, bookingID, startTime, endTime, channel, tunerID, record, title, description, state, notice)
+
         bookings.append(booking)
 
     return bookings
@@ -289,23 +310,23 @@ def GetBooking(cursor, bookingID):
 
     Returns Booking object bookingID, or None it couldn't be found
     
-
-    Booking also gets an extra "channel" attribute containing a
-    Channel object
-    
     """
 
     channels = dict([(c.id, c) for c in andp.model.tuners.GetChannels(cursor)])
 
-    PsE(cursor, "select id, startTime, endTime, channelID, tunerID, record, state, notice, title, description, username from Bookings where id=%s", (bookingID,))
+    PsE(cursor, "select id, startTime, endTime, channelID, tunerID, ipURI, record, state, notice, title, description, username from Bookings where id=%s", (bookingID,))
 
     try:
-        bookingID, startTime, endTime, channelID, tunerID, record, state, notice, title, description, username = cursor.fetchone()
+        bookingID, startTime, endTime, channelID, tunerID, ipURI, record, state, notice, title, description, username = cursor.fetchone()
     except TypeError:
         # Not found
         return None
     else:
-        booking = Booking(username, bookingID, startTime, endTime, channelID, tunerID, record, title, description, state, notice)
-        booking.channel = channels[booking.channelID]
+        if channelID:
+            channel = channels[channelID]
+        else:
+            channel = channels[ipURI]
+
+        booking = Booking(username, bookingID, startTime, endTime, channel, tunerID, record, title, description, state, notice)
         
         return booking

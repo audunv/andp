@@ -130,24 +130,35 @@ class Tuner(object):
 
 class BaseChannel(object):
     "Base class for all channels. Name is due to historical reasons"
-    def __init__(self, name):
+    def __init__(self, cID, name):
+        self.id = cID
         self.name = name
+
+    def __cmp__(self, other):
+        if self.name < other.name:
+            return -1
+        elif self.name > other.name:
+            return 1
+        elif self.provider < other.provider:
+            return -1
+        elif self.provider > other.provider:
+            return 1
+        else:
+            return 0
 
 class Channel(BaseChannel):
     "Dreambox-based channels"
     def __init__(self, cID, name, provider, enabled):
-        BaseChannel.__init__(self, name)
+        BaseChannel.__init__(self, cID, name)
         
-        self.id       = cID
         self.provider = provider
         self.enabled  = enabled
 
 class IPChannel(BaseChannel):
     "Streamed channels (from any URI understood by VLC)"
     def __init__(self, uri, name):
-        BaseChannel.__init__(self, name)
-
-        self.uri = uri
+        BaseChannel.__init__(self, uri, name)
+        self.provider = "IPTV"
 
 def GetTuner(cursor, cfg, tunerID):
     """
@@ -264,7 +275,12 @@ def GetChannels(cursor, filter = 'a'):
     else:
         PsE(cursor, "select id, name, provider, enabled from channels order by name")
         
-    return [Channel(cID, name, provider, bool(enabled)) for cID, name, provider, enabled in cursor.fetchall()]
+    satChannels = [Channel(cID, name, provider, bool(enabled)) for cID, name, provider, enabled in cursor.fetchall()]
+
+    PsE(cursor, "select uri, name from ipchannels order by name")
+    ipChannels = [IPChannel(uri, name) for uri, name in cursor.fetchall()]
+
+    return sorted(satChannels + ipChannels)
 
 def EnableChannel(cursor, cID):
     PsE(cursor, "update channels set enabled='t' where id=%s", (cID,))

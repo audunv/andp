@@ -92,19 +92,27 @@ def PerformBroadcast(cfg, conn, cursor, booking):
     #conn.close()
     #del cursor, conn
 
-    tuner.SwitchToChannel(booking.channelID)
-    tsURL = tuner.GetTSURL()
-
     outBasePath = booking.GetBasePath(cfg)
+
+    if isinstance(booking.channel, andp.model.tuners.Channel):
+        tuner.SwitchToChannel(booking.channel.id)
+        uri = tuner.GetTSURL()
+
+        if booking.record:
+            cmd = ("vlc", "-I", "dummy", "%s" % uri, "--sout-all", "--sout-udp-ttl", "10", "--sout", "#duplicate{dst=standard{mux=ts,dst=%s,access=rtp},dst=standard{access=file,mux=ps,dst=%s.mpg}}" % (tuner.mcGroup, outBasePath))
+        else:
+            cmd = ("vlc", "-I", "dummy", "%s" % uri, "--sout-all", "--sout-udp-ttl", "10", "--sout", "#standard{mux=ts,dst=%s,access=rtp}" % tuner.mcGroup)
+    else:
+        uri = booking.channel.id
+
+        if booking.record:
+            cmd = ("vlc", "-I", "dummy", "%s" % uri, "--sout-all", "--sout", "#standard{access=file,mux=ps,dst=%s.mpg}" % (outBasePath,))
+        else:
+            cmd = None # Don't do nothing
 
     dirPath = os.path.split(outBasePath)[0]
     if not os.path.exists(dirPath):
         os.makedirs(dirPath)
-
-    if booking.record:
-        cmd = ("vlc", "-I", "dummy", "%s" % tsURL, "--sout-all", "--sout-udp-ttl", "10", "--sout", "#duplicate{dst=standard{mux=ts,dst=%s,access=rtp},dst=standard{access=file,mux=ps,dst=%s.mpg}}" % (tuner.mcGroup, outBasePath))
-    else:
-        cmd = ("vlc", "-I", "dummy", "%s" % tsURL, "--sout-all", "--sout-udp-ttl", "10", "--sout", "#standard{mux=ts,dst=%s,access=rtp}" % tuner.mcGroup)
 
     # We'll loop and sleep instead of just sleep, so that we don't
     # have to create a signal handler. (Sleeping is necessary, since
@@ -116,38 +124,36 @@ def PerformBroadcast(cfg, conn, cursor, booking):
     stdOut = open(outBasePath + ".mpg.stdout", "w")
     stdErr = open(outBasePath + ".mpg.stderr", "w")
 
-    proc = subprocess.Popen(cmd, stdout = stdOut, stderr = stdErr)
+    if cmd:
+        proc = subprocess.Popen(cmd, stdout = stdOut, stderr = stdErr)
 
-    then = time.time() # For calculating real duration of recording
+        then = time.time() # For calculating real duration of recording
 
-    # Loop and sleep. Se above.
-    while datetime.datetime.now(booking.endTime.tzinfo) <= booking.endTime:
-        retCode = proc.poll()
-
-        if retCode != None:
-            break
+        # Loop and sleep. Se above.
+        while datetime.datetime.now(booking.endTime.tzinfo) <= booking.endTime:
+            retCode = proc.poll()
+            
+            if retCode != None:
+                break
+            
+            time.sleep(1)
+            
+        if retCode or datetime.datetime.now(booking.endTime.tzinfo) <= booking.endTime:
+            # Early termination or return code != 0 indicates error
+            booking.SetState(cursor, "e", "Return code was %i. Error occured at %s." % (retCode, datetime.datetime.now(booking.startTime.tzinfo)))
+        else:
+            now = time.time()
         
-        time.sleep(1)
+            os.kill(proc.pid, signal.SIGTERM)
+            time.sleep(5)
+            try:
+                os.kill(proc.pid, signal.SIGKILL)
+            except OSError:
+                pass
 
-    #conn = psycopg2.connect("dbname=%s user=%s" % (dbName, dbUser))
-    #cursor = conn.cursor()
-
-    if retCode or datetime.datetime.now(booking.endTime.tzinfo) <= booking.endTime:
-        # Early termination or return code != 0 indicates error
-        booking.SetState(cursor, "e", "Return code was %i. Error occured at %s." % (retCode, datetime.datetime.now(booking.startTime.tzinfo)))
-    else:
-        now = time.time()
-        
-        os.kill(proc.pid, signal.SIGTERM)
-        time.sleep(5)
-        try:
-            os.kill(proc.pid, signal.SIGKILL)
-        except OSError:
-            pass
-
-        # Only try to split file if we're actually recording
-        if booking.record:
-            SplitFile(FILE_SIZE_LIMIT, outBasePath + ".mpg")
+    # Only try to split file if we're actually recording
+    if booking.record:
+        SplitFile(FILE_SIZE_LIMIT, outBasePath + ".mpg")
 
         booking.SetState(cursor, 'f')
         booking.SetRealDuration(cursor, now - then) # Must be done after SetState (due to integrity checks)

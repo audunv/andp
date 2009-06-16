@@ -27,7 +27,7 @@ representing tuners and channels.
 
 """
 
-import urllib, urllib2, zlib, time, md5
+import urllib, urllib2, zlib, time, md5, re
 
 import andp.exceptions
 
@@ -37,6 +37,8 @@ from andp.db import PsE
 # indicate decryption problems
 ENTROPY_LIMIT = 0.002
 MINIMUM_SIZE  = 8000
+
+URI = re.compile(r'^[a-z]{2,}://')
 
 class Tuner(object):
     def __init__(self, host, password, mcGroup):
@@ -294,3 +296,13 @@ def GetAvailableTuners(cursor, channelID, startTime, endTime, bookingID = None):
 
     PsE(cursor, "select GetAvailableTuners(%s, %s, %s, %s)", (channelID, startTime, endTime, bookingID))
     return [r[0] for r in cursor.fetchall()]
+
+def GetChannelByID(cursor, cID):
+    "Returns channel object with id == cID"
+
+    if URI.search(cID):
+        PsE(cursor, "select name from ipchannels where uri=%s", (cID,))
+        return IPChannel(cID, cursor.fetchone()[0])
+    else:
+        PsE(cursor, "select name from channels where id=%s", (cID,))
+        return Channel(cID, cursor.fetchone()[0])

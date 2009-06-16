@@ -227,6 +227,8 @@ class BookingsEdit(Page):
 
         title = widgets["title"].ParseInput(form)[1]
         description = widgets["description"].ParseInput(form)[1]
+
+        channel = andp.model.tuners.GetChannelByID(self.req.cursor, channelID)
         
         try:
             bookingID = form["bID"].value
@@ -238,12 +240,12 @@ class BookingsEdit(Page):
 
             booking.startTime   = startTime
             booking.endTime     = endTime
-            booking.channelID   = channelID
+            booking.channel     = channel
             booking.record      = record
             booking.title       = title
             booking.description = description
         else:
-            booking = andp.model.bookings.Booking(self.user.username, None, startTime, endTime, channelID, None, record, title, description)
+            booking = andp.model.bookings.Booking(self.user.username, None, startTime, endTime, channel, None, record, title, description)
 
         return booking
     

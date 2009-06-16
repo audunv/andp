@@ -31,7 +31,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     if "".join(sys.argv[1:]).find(":") != -1:
-        print "Error: Forbidden character : used!"
+        print 'Error: Invalid character ":"'
         sys.exit(1)
 
     filepath = sys.argv[1]

@@ -1,7 +1,8 @@
 #! /usr/bin/python
+# -*- coding: utf-8; -*-
 # ANDP password file generator
 
-# Copyright (C) 2009 Østfold University College
+# Copyright (C) 2009 Ã˜stfold University College
 # 
 # This file is part of ANDP.
 # 

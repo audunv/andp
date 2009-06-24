@@ -255,7 +255,7 @@ def CountChannels(cursor):
 
     return numChannels, tuners
 
-def GetChannels(cursor, filter = 'a'):
+def GetChannels(cursor, filter = 'a', type = 'a'):
     """
 
     Returns Channel list of all known channels, sorted by name
@@ -263,25 +263,35 @@ def GetChannels(cursor, filter = 'a'):
       filter:
         e:           Return enabled channels only
         d:           Return disabled channels only
-
         Default return all channels
-    
+
+      type:
+        s:           Return only sat channels
+        i:           Return only IPTV channels
+
     """
 
     assert filter in 'ade'
+    assert type in 'asi'
 
-    if filter == 'e':
-        PsE(cursor, "select id, name, provider, enabled from channels where enabled order by name")
-    elif filter == 'd':
-        PsE(cursor, "select id, name, provider, enabled from channels where not enabled order by name")
-    else:
-        PsE(cursor, "select id, name, provider, enabled from channels order by name")
+    if type != "i":
+        if filter == 'e':
+            PsE(cursor, "select id, name, provider, enabled from channels where enabled order by name")
+        elif filter == 'd':
+            PsE(cursor, "select id, name, provider, enabled from channels where not enabled order by name")
+        else:
+            PsE(cursor, "select id, name, provider, enabled from channels order by name")
         
-    satChannels = [Channel(cID, name, provider, bool(enabled)) for cID, name, provider, enabled in cursor.fetchall()]
+        satChannels = [Channel(cID, name, provider, bool(enabled)) for cID, name, provider, enabled in cursor.fetchall()]
+    else:
+        satChannels = []
 
-    PsE(cursor, "select uri, name from ipchannels order by name")
-    ipChannels = [IPChannel(uri, name) for uri, name in cursor.fetchall()]
-
+    if type != "s":
+        PsE(cursor, "select uri, name from ipchannels order by name")
+        ipChannels = [IPChannel(uri, name) for uri, name in cursor.fetchall()]
+    else:
+        ipChannels = []
+    
     return sorted(satChannels + ipChannels)
 
 def EnableChannel(cursor, cID):

@@ -210,3 +210,31 @@ class AdminSelectChannels(Page):
         self.SendHeader()
         self.Write(html % d)
         return apache.OK
+
+class AdminSelectIPTVChannels(Page):
+    path = "/admin/select_iptv_channels"
+
+    def Main(self):
+        if self.user == None or not self.user.admin:
+            self.RedirectToLogin()
+            return
+
+        form = mod_python.util.FieldStorage(self.req)
+
+        if form.has_key('add') and form.has_key("name") and form.has_key("address"):
+            andp.model.tuners.AddIPTVChannel(self.req.cursor, form["name"].value, form["address"].value)
+        elif form.has_key('remove') and form.has_key("enabled"):
+            andp.model.tuners.RemoveIPTVChannel(self.req.cursor, form["enabled"].value)
+        elif form.has_key('done'):
+            self.Redirect("./")
+
+        html = self.LoadTemplate()
+
+        d = {}
+        d["message"] = "Select which channels should be available to your users."
+        d["title"] = "Select channels"
+        d["enabled"] = "\n".join(['  <option value="%s">%s (%s)</option>' % (c.id, c.name, c.provider) for c in andp.model.tuners.GetChannels(self.req.cursor, 'e', 'i')])
+
+        self.SendHeader()
+        self.Write(html % d)
+        return apache.OK

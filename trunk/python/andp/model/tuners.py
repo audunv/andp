@@ -300,6 +300,12 @@ def EnableChannel(cursor, cID):
 def DisableChannel(cursor, cID):
     PsE(cursor, "update channels set enabled='f' where id=%s", (cID,))
 
+def AddIPTVChannel(cursor, name, address):
+    PsE(cursor, "insert into ipchannels values (%s, %s)", (address, name))
+
+def RemoveIPTVChannel(cursor, cID):
+    PsE(cursor, "delete from ipchannels where uri = %s", (cID, ))
+
 def GetAvailableTuners(cursor, channelID, startTime, endTime, bookingID = None):
     if bookingID == None:
         bookingID = 'non-existing'

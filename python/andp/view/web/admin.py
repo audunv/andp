@@ -204,8 +204,8 @@ class AdminSelectChannels(Page):
         d = {}
         d["message"] = "Select which channels should be available to your users."
         d["title"] = "Select channels"
-        d["available"] = "\n".join(['  <option value="%s">%s (%s)</option>' % (c.id, c.name, c.provider) for c in andp.model.tuners.GetChannels(self.req.cursor, 'd')])
-        d["enabled"] = "\n".join(['  <option value="%s">%s (%s)</option>' % (c.id, c.name, c.provider) for c in andp.model.tuners.GetChannels(self.req.cursor, 'e')])
+        d["available"] = "\n".join(['  <option value="%s">%s (%s)</option>' % (c.id, c.name, c.provider) for c in andp.model.tuners.GetChannels(self.req.cursor, 'd', 's')])
+        d["enabled"] = "\n".join(['  <option value="%s">%s (%s)</option>' % (c.id, c.name, c.provider) for c in andp.model.tuners.GetChannels(self.req.cursor, 'e', 's')])
 
         self.SendHeader()
         self.Write(html % d)

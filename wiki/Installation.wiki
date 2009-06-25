@@ -14,14 +14,21 @@ Install the following packages and their dependencies (e.g. using apt-get):
 
   * apache2
   * libapache2-mod-python
-  * python-psycopg2
   * postgresql-plpython
+  * python-imaging
+  * python-ldap
+  * python-psycopg2
+  * python-tz
+
+You will also need [http://www.funktronics.ca/python-xmltv/ python-xmltv], which must probably be installed manually.
 
 = Installing ANDP =
 
 Pre-compiled versions of ANDP are currently not available. Instead download the source code, as described on [http://code.google.com/p/andp/source/checkout the project page].
 
 The examples below assume that ANDP has been placed within {{{/usr/local/andp}}}.
+
+Make sure that ANDP's modules are placed where Python can find them, e.g. by doing a {{{sudo ln -s /usr/local/andp/python/andp /usr/lib/python2.5/site-packages/}}}
 
 = Configuring Apache =
 

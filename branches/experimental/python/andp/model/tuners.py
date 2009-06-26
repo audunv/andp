@@ -322,3 +322,8 @@ def GetChannelByID(cursor, cID):
     else:
         PsE(cursor, "select name from channels where id=%s", (cID,))
         return Channel(cID, cursor.fetchone()[0])
+
+def GetChannelURIByName(cursor, name):
+    "Returns IPTV channel uri for name == name"
+    PsE(cursor, "select uri from ipchannels where name=%s", (name, ))
+    return cursor.fetchone()[0]

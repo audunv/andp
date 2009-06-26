@@ -67,6 +67,8 @@ class Browse(Page):
             trash, fakeBooking.id = channels[0]
             fakeBooking.id = fakeBooking.id.replace(" (IPTV)", "").replace(" ", "%20")
             
+        d["channel"] = fakeBooking.id.replace("%20", " ")
+        d["curProgramme"] = self.GetCurrentProgramme(self.GetChannelListings(fakeBooking.id))
         d["view"] = self.GetPreviewHTML(fakeBooking)
         d["channels"] = andp.view.web.widgets.SelectWidget(self, "channel", options = channels).GetHTML().replace("<select", '<select onchange="this.form.submit()"')
         d["programme"] = self.CreateProgrammeTable(self.GetChannelListings(fakeBooking.id))
@@ -93,8 +95,20 @@ class Browse(Page):
             return cmp(a[fieldname], b[fieldname])
         return compare_two_dicts
 
+    def GetCurrentProgramme(self, listings):
+        listings.sort(self.CompareProgrammeListings("start"))
+        today = []
+
+        for item in listings:
+            if datetime.datetime.strptime(item["start"][:-6], "%Y%m%d%H%M%S") < datetime.datetime.today() and datetime.datetime.strptime(item["stop"][:-6], "%Y%m%d%H%M%S") < datetime.datetime.today():
+                    continue
+            else:
+                today.append(item)
+
+        return today[0]["title"][0][0]
+
     def CreateNowNextTable(self, listings):
-        outp = "<table><th></th><th>Start</th><th>Stop</th><th>Title</th><th>Description</th>\n"
+        outp = "<table><th></th><th>Start</th><th>Title</th>\n"
         listings.sort(self.CompareProgrammeListings("start"))
         today = []
         for item in listings:
@@ -114,7 +128,9 @@ class Browse(Page):
                 desc = item["desc"][0][0].encode("UTF-8")
             except KeyError:
                 desc = ""
-            outp += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n" % (item["time"], self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["start"])).strftime(self.timeformatnownext), self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["stop"])).strftime(self.timeformatnownext), item["title"][0][0].encode("UTF-8"), desc)
+            outp += "<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n" % (item["time"], self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["start"])).strftime(self.timeformatnownext), item["title"][0][0].encode("UTF-8"))
+#            outp += "<tr><td class='nownexttable' colspan=3>%s</td>" % desc
+#            outp += "<tr><td colspan=3>&nbsp;</td>"
 
         outp += "</table>"
 

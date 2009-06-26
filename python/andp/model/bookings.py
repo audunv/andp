@@ -41,6 +41,42 @@ MONTH = "1 MONTH"
 YEAR = "1 YEAR"
 
 
+class FakeBooking(object):
+    def __init__(self, username = None, bookingID = None, startTime = None, endTime = None, channel = None, tunerID = None, record = None, title = None, description = None, state = None, notice = None):
+
+        """
+
+        Booking object
+
+          username:    Username of owner
+          bookingID:   Booking ID (None for new bookings)
+          startTime:   Start date and time (tuple or datetime)
+          endTime:     See above
+          channel:     Channel to broadcast/record from
+          tunerID:     Tuner ID (None to allocate automatically; ignored for IP channels)
+          record:      True if programme should be recorded as well as broadcast
+          title:       User's booking title
+          description: User's description of booking
+
+        Optional parameters:
+
+          state:       State of recording (see tables.sql)
+          notice:      Status message or similar
+        
+        """
+
+        self.username    = username
+        self.id          = bookingID
+        self.startTime   = startTime
+        self.endTime     = endTime
+        self.channel     = channel
+        self.tunerID     = tunerID
+        self.record      = record
+        self.title       = title
+        self.description = description
+        self.state       = state
+        self.notice      = notice
+
 class Booking(object):
     def __init__(self, username, bookingID, startTime, endTime, channel, tunerID, record, title, description, state = None, notice = None):
         """

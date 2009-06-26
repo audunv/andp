@@ -94,51 +94,68 @@ class M3U(Page):
     BOOKING_ID = re.compile(r'/m3u/([0-9a-f]{32})\.m3u')
     
     def Main(self):
+        browse = False
+
         m = self.BOOKING_ID.search(self.req.uri)
 
         if not m:
             # Invalid URL
-            return apache.HTTP_NOT_FOUND
+            nameList = []
+            for item in andp.model.tuners.GetChannels(self.req.cursor, 'e', 'i'):
+                nameList.append(item.name)
+            if self.req.uri.replace("/m3u/", "").replace(".m3u", "") not in nameList:
+                return apache.HTTP_NOT_FOUND
+            else:
+                browse = True
+                name = self.req.uri.replace("/m3u/", "").replace(".m3u", "")
+                title = name
+                booking = andp.model.bookings.FakeBooking()
+                booking.channel = andp.model.tuners.IPChannel(None, name)
+                startTimeS = name
 
-        bookingID = m.group(1)
-        booking = andp.model.bookings.GetBooking(self.req.cursor, bookingID)
+        if not browse:
+            bookingID = m.group(1)
+            booking = andp.model.bookings.GetBooking(self.req.cursor, bookingID)
 
-        if booking.title:
-            title = booking.title
-        else:
-            title = 'Untitled'
+            if booking.title:
+                title = booking.title
+            else:
+                title = 'Untitled'
 
-        startTimeS = booking.startTime.strftime("%d %B %Y, %H:%M:%S")
+            startTimeS = booking.startTime.strftime("%d %B %Y, %H:%M:%S")
 
-        if not booking:
-            # Booking does not exist
-            return apache.HTTP_NOT_FOUND
+            if not booking:
+                # Booking does not exist
+                return apache.HTTP_NOT_FOUND
 
-        if booking.state not in "if":
-            # Booking has wrong state
-            return apache.HTTP_NOT_FOUND
+            if booking.state not in "if":
+                # Booking has wrong state
+                return apache.HTTP_NOT_FOUND
         
         m3u  = '#EXTM3U\n'
         m3u += '#EXTINF:0, %s (%s, %s)\n' % (title, booking.channel.name, startTimeS)
         m3u += '#EXTVLCOPT:vout-filter=deinterlace\n'
         m3u += '#EXTVLCOPT:deinterlace-mode=blend\n'
-        
-        if booking.state == 'f':
-            # Finished booking, stream on-demand, file-by-file
 
-            # Count number of .mpg files
-            numFiles = len(glob.glob("%s*.mpg" % booking.GetBasePath(self.req.config)))
-            webBasePath = booking.GetWebBasePath(self.req.config)
+        if not browse:
+            if booking.state == 'f':
+                # Finished booking, stream on-demand, file-by-file
 
-            m3u += '\n'.join(['http://%s.%s%s_%03i.mpg\n' % (self.req.config["network"]["host"], self.req.config["network"]["domain"], webBasePath, i) for i in xrange(0, numFiles)])
-        else:
-            # Booking in progress: Stream live
-            tuner = andp.model.tuners.GetTuner(self.req.cursor, self.req.config, booking.tunerID)
+                # Count number of .mpg files
+                numFiles = len(glob.glob("%s*.mpg" % booking.GetBasePath(self.req.config)))
+                webBasePath = booking.GetWebBasePath(self.req.config)
 
-            if isinstance(booking.channel, andp.model.tuners.Channel):
-                m3u += 'rtp://@%s:1234\n' % (tuner.mcGroup)
+                m3u += '\n'.join(['http://%s.%s%s_%03i.mpg\n' % (self.req.config["network"]["host"], self.req.config["network"]["domain"], webBasePath, i) for i in xrange(0, numFiles)])
             else:
-                m3u += booking.channel.id
+                # Booking in progress: Stream live
+                tuner = andp.model.tuners.GetTuner(self.req.cursor, self.req.config, booking.tunerID)
+
+                if isinstance(booking.channel, andp.model.tuners.Channel):
+                    m3u += 'rtp://@%s:1234\n' % (tuner.mcGroup)
+                else:
+                    m3u += booking.channel.id
+        else:
+            m3u += andp.model.tuners.GetChannelURIByName(self.req.cursor, name)
         
         self.SendHeader(contentType = "application/x-mpegurl")
         #self.SendHeader(contentType = "text/plain")

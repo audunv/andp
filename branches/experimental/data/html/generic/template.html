@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>%(title)s</title>
+    <style type="text/css" media="screen">@import "/css/main.css";</style>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    %(head)s
+  </head>
+  <body>
+    <div id="tabs">
+      <ul>
+        <li%(tab_bookings)s><a href="/">Bookings</a></li>
+        <li%(tab_library)s><a href="/library/">Library</a></li>
+        <li%(tab_admin)s><a href='http%(ssl)s://%(hostname)s/admin/'>Administration</a></li>
+	<li%(tab_help)s><a href="/help/">Help</a></li>
+      </ul>
+    </div>
+
+    <!-- Must be spaceless for IE6 -->
+    <div id="topline"><img src="/img/pixel.gif" alt="" /></div>
+
+    <span id="userInfo">
+      %(userInfo)s
+    </span>
+
+    <div id="main">
+      %(body)s
+    </div>
+
+    <div id="bottomline">
+      <p>
+        &copy;media.hiof.no
+      </p>
+    </div>
+  
+    <div id="bottommost1"><div id="bottommost2"><img src="/img/pixel.gif" alt="" /></div></div>
+  </body>
+</html>

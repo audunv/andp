@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>ANDP: User administration</title>
+  </head>
+  <body>
+    
+    <p>%(message)s</p>
+    
+    <h1>User list</h1>
+
+    <table>
+      <tr>
+	<th><a href="/admin/users?sort=fullName&order=%(order)s">Name</a></th>
+	<th><a href="/admin/users?sort=username&order=%(order)s">User ID</a></th>
+	<th><a href="/admin/users?sort=email&order=%(order)s">E-mail<a/></th>
+	<th><a href="/admin/users?sort=admin&order=%(order)s">Admin</a></th>
+      </tr>
+      %(users)s
+    </table>
+  </body>
+</html>

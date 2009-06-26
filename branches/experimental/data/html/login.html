@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>ANDP: Login</title>
+  </head>
+  <body>
+    <h1>Login</h1>
+    <p>
+      You need to be logged in to see the page you requested. Please
+      log in using your intranet user name and password.
+    </p>
+    <p>%(login_message)s</p>
+    <form method="post" action="login">
+      <table>
+        <tr>
+          <th>Your username:</th>
+          <td>
+            <input type="text" name="username" value="%(username)s" />
+	  </td>
+        </tr>
+        </tr>
+        <tr>
+          <th>Password:</th>
+          <td>
+            <input type="password" name="password" />
+        </td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td>
+            <input type="submit" value="Log in" />
+          </td>
+        </tr>
+      </table>
+      <input type="hidden" name="target" value="%(target)s" />
+    </form>
+  </body>
+</html>

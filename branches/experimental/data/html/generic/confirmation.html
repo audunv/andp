@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>ANDP: %(title)s</title>
+  </head>
+  <body>
+    <div class="dialog">
+      <h1>%(title)s</h1>
+
+      <form action="%(path)s" method="post">
+        %(message)s
+        <p>
+          <input type="hidden" name="%(hidden_name)s" value="%(hidden_value)s" />
+          <input type="hidden" name="target" value="%(target)s" />
+	  
+          <input type="submit" name="yes" value="&nbsp;%(yes)s&nbsp;" />
+          <input type="submit" name="no"  value="&nbsp;%(no)s&nbsp;" />
+        </p>
+      </form>
+    </div>
+  </body>
+</html>

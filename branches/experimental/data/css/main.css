@@ -1,0 +1,187 @@
+body {
+  background-color: black;
+  color: white;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  margin: 32px auto 16px auto;
+  width: 90%;
+}
+
+h1, h2, h3 {
+  font-weight: normal;
+}
+
+h1 {
+  font-size: 150%;
+  margin-top: 1em;
+}
+
+h2 {
+  font-size: 125%;
+}
+
+.error {
+  color: red;
+}
+
+a {
+  color: rgb(192, 192, 192);
+}
+
+a:active, a:hover {
+  color: white;
+}
+
+/***********************************************************************
+
+  Tabs
+
+***********************************************************************/
+
+#tabs {
+  float: left;
+  line-height: normal;
+}
+
+#tabs ul {
+  margin: 0;
+  padding: 0px 0px 0px 0px;
+  list-style: none;
+}
+
+#tabs li {
+  float:left;
+  background:url("/img/tabs/tab_inactive_left.png") no-repeat left top;
+  margin: 0px 16px 0px 0px;
+  padding: 0px 0px 0px 32px;
+}
+
+#tabs ul a {
+  float: left;
+  display: block;
+  background:url("/img/tabs/tab_inactive_right.png") no-repeat right top;
+  padding: 8px 32px 4px 0px;
+  color: white;
+  text-decoration: none;
+}
+
+#tabs a:hover {
+  text-decoration: underline;
+}
+
+#tabs #current {
+  background-image:url("/img/tabs/tab_active_left.png");
+}
+
+#tabs #current a {
+  background-image:url("/img/tabs/tab_active_right.png");
+  color: black;
+}
+
+/***********************************************************************
+
+  Lines
+
+***********************************************************************/
+
+#topline {
+  clear: both;
+  padding: 0px;
+  background: white url("/img/tabs/top_line.png") repeat-x right top;
+  line-height: normal;
+  height: 4px;
+  display: block;
+}
+
+/***********************************************************************
+
+  Main
+
+***********************************************************************/
+
+#main {
+  margin: 0;
+}
+
+#userInfo {
+  color: rgb(192, 192, 192);
+  float: right;
+  margin-top: 2px;
+  text-align: right;
+}
+
+
+/***********************************************************************
+
+  Library browsing
+
+***********************************************************************/
+
+
+.browseleft {
+  float: left;
+  padding: 5px;
+}
+
+.browseright {
+  float: right;
+}
+
+.browseselected {
+  background: white;
+  color: black;
+  font-weigth: bold;
+}
+
+#browseupperleft{
+  float: left;
+  width: 30%;
+  heigth: 40%;
+  overflow: auto;
+}
+
+#browseupperright{
+  float: right;
+  width: 70%;
+  heigth: 40px;
+  overflow: auto;
+}
+
+#browselower{
+  width: 100%;
+  heigth: 50%;
+}
+
+/***********************************************************************
+
+  Tables
+
+***********************************************************************/
+
+table {
+  border-collapse: collapse;
+}
+
+th, td { 
+  border: thin solid rgb(64, 64, 64);
+  padding: 4px 8px;
+}
+
+table.thRight th {
+  text-align: right;
+}
+
+/***********************************************************************
+
+  Preview
+
+***********************************************************************/
+
+p.preview {
+  border: solid 1px rgb(64, 64, 64);
+  width: 688px;
+  height: 496px;
+  padding: 40px;
+  text-align: center;
+  line-height: 2em;
+}

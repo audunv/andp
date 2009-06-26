@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <title>ANDP: Administration</title>
+  </head>
+  <body>
+    <h1>Administration</h1>
+
+    <h2>Manage users</h2>
+
+    <ul>
+      <li><p><a href="/admin/users">List of users</a></p></li>
+      <li><p><a href="/admin/admins">Add or remove ANDP administrators</a></p></li>
+    </ul>
+
+    <h2>Tuners</h2>
+
+    <p>
+      To update the channel lists, click the <em>Update channels
+      list</em> button below. (Tuners are defined in the ANDP
+      configuration file.)
+    </p>
+
+    <p>
+      %(numChannels)i unique channels are available.
+    </p>
+
+    %(tuners)s
+
+    <form method="post" action="tuners/update_channel_lists">
+      <p>
+	<input type="submit" value="Update channels" />
+      </p>
+    </form>
+
+    <h2>Channels</h2>
+
+    <p>
+      These channels are currently available to your users. Click
+      the <em>Select channels</em> button below to add or remove
+      channels.
+    </p>
+
+    <table>
+      <tr>
+	<th>Channel name</th>
+	<th>Provider</th>
+      </tr>
+      %(channels)s
+    </table>
+
+    <h2>Manage satelite channels</h2>
+    <form method="post" action="select_channels">
+      <p>
+	<input type="submit" value="Select channels" />
+      </p>
+    </form>
+    <h2>Manage IPTV channels</h2>
+    <form method="post" action="select_iptv_channels">
+      <p>
+	<input type="submit" value="Manage channels" />
+      </p>
+    </form>
+
+  </body>
+</html>

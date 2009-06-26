@@ -128,7 +128,10 @@ class Browse(Page):
                 desc = item["desc"][0][0].encode("UTF-8")
             except KeyError:
                 desc = ""
-            outp += "<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n" % (item["time"], self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["start"])).strftime(self.timeformatnownext), item["title"][0][0].encode("UTF-8"))
+
+            bookLink = ""
+            
+            outp += """<tr><td>%s</td><td>%s</td><td onMouseover="ddrivetip('%s')" onMouseout="hideddrivetip()"><a href="%s">%s</a></td></tr>\n""" % (item["time"], self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["start"])).strftime(self.timeformatnownext), desc.replace("'", "\'"), bookLink,item["title"][0][0].encode("UTF-8"))
 #            outp += "<tr><td class='nownexttable' colspan=3>%s</td>" % desc
 #            outp += "<tr><td colspan=3>&nbsp;</td>"
 

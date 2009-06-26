@@ -1,12 +1,13 @@
 <html>
   <head>
-    <title>ANDP: Experimental channel browser</title>
+    <title>ANDP: Experimental channel browser
+    </title>
   </head>
   <body>
     <h1>Experimental channel browser</h1>
-      <form method="post" action="">
+      <form method="post" action="" name="switchForm">
 	%(channels)s
-	<input type="submit" name="switch" value="Switch to channel" />
+	<input type="submit" name="switch" id="hidable" value="Switch to channel" />
       </form>
       
       <p><hr /></p>
@@ -20,4 +21,5 @@
    %(programme)s
    
   </body>
+
 </html>

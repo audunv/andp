@@ -61,17 +61,20 @@ class Browse(Page):
         form = mod_python.util.FieldStorage(self.req)
         channels = [(c.id, "%s (%s)" % (c.name, c.provider)) for c in andp.model.tuners.GetChannels(self.req.cursor, 'e', 'i')]
 
-        if form.has_key('switch') and form.has_key("channel"):
+        if form.has_key("channel"):
             fakeBooking.id = andp.model.tuners.GetChannelByID(self.req.cursor, form["channel"].value).name.replace(" ", "%20")
         else:
             trash, fakeBooking.id = channels[0]
             fakeBooking.id = fakeBooking.id.replace(" (IPTV)", "").replace(" ", "%20")
             
         d["view"] = self.GetPreviewHTML(fakeBooking)
-        d["channels"] = andp.view.web.widgets.SelectWidget(self, "channel", options = channels).GetHTML()
+        d["channels"] = andp.view.web.widgets.SelectWidget(self, "channel", options = channels).GetHTML().replace("<select", '<select onchange="this.form.submit()"')
         d["programme"] = self.CreateProgrammeTable(self.GetChannelListings(fakeBooking.id))
         d["today"] = self.CreateNowNextTable(self.GetChannelListings(fakeBooking.id))
         html = self.LoadTemplate("main.html")
+
+        html = html.replace("</head>", '<script type="text/javascript" src="/javascript/browse.js"></script>\n</head>').replace("<body>", '<body onload="remButton();">')
+        
 
         self.SendHeader()
         self.Write(html % d)

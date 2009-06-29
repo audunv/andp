@@ -27,7 +27,7 @@ interface
 
 """
 
-__all__ = ["auth", "bookings", "library", "admin", "widgets", "remote"]
+__all__ = ["auth", "bookings", "library", "admin", "widgets", "remote", "browse"]
 
 import re, os, time, urllib, socket
 
@@ -574,6 +574,7 @@ class Page(object):
         d["tab_bookings"] = ""
         d["tab_library"] = ""
         d["tab_help"] = ""
+        d["tab_browse"] = ""
 
         if self.user and self.user.admin:
             d["tab_admin"] = ' style="display: block;"'
@@ -588,6 +589,8 @@ class Page(object):
             d["tab_admin"] += cur
         elif self.req.uri.startswith("/help/"):
             d["tab_help"] += cur
+        elif self.req.uri.startswith("/browse/"):
+            d["tab_browse"] += cur
         else:
             d["tab_bookings"] = cur
 

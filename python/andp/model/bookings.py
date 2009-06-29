@@ -264,13 +264,18 @@ def GetRecordedChannels(cursor):
 
     channelDict = dict([(c.id, c) for c in andp.model.tuners.GetChannels(cursor)])
 
-    PsE(cursor, "select channelID from bookings where record group by channelID")
+    PsE(cursor, "select (channelID, ipuri) from bookings where record group by channelid, ipuri order by channelID, ipuri")
     
     channels = []
 
     for channelID in cursor.fetchall():
-        channels.append(channelDict[channelID[0]])
-    
+
+        if channelDict.has_key(channelID[0]):
+            channels.append(channelDict[channelID[0].split(",")[0].replace("(", "").replace(")", "")])
+        else:
+            open("/tmp/debug.txt", "w").write(channelID[0].split(",")[1].replace("(", "").replace(")", ""))
+            channels.append(channelDict[channelID[0].split(",")[1].replace("(", "").replace(")", "")])
+            
     return channels
 
 def GetYearsWithRecordings(cursor):

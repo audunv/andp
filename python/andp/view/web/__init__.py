@@ -583,7 +583,7 @@ class Page(object):
 
         #if self.req.uri.startswith("/"):
         #    d["tab_bookings"] = cur
-        if self.req.uri.startswith("/library/"):
+        if self.req.uri.startswith("/library2/"):
             d["tab_library"] = cur
         elif self.req.uri.startswith("/admin/"):
             d["tab_admin"] += cur

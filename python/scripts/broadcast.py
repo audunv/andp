@@ -125,8 +125,6 @@ def PerformBroadcast(cfg, conn, cursor, booking):
     stdErr = open(outBasePath + ".mpg.stderr", "w")
 
     if cmd:
-        for item in cmd:
-            open("/tmp/debug.txt", "a").write(item + " : ")
         proc = subprocess.Popen(cmd, stdout = stdOut, stderr = stdErr)
 
         then = time.time() # For calculating real duration of recording

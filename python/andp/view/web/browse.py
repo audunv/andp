@@ -71,7 +71,6 @@ class Browse(Page):
         d["curProgramme"] = self.GetCurrentProgramme(self.GetChannelListings(fakeBooking.id))
         d["view"] = self.GetPreviewHTML(fakeBooking)
         d["channels"] = andp.view.web.widgets.SelectWidget(self, "channel", options = channels).GetHTML().replace("<select", '<select onchange="this.form.submit()"')
-        d["programme"] = self.CreateProgrammeTable(self.GetChannelListings(fakeBooking.id))
         d["today"] = self.CreateNowNextTable(self.GetChannelListings(fakeBooking.id))
         html = self.LoadTemplate("main.html")
 

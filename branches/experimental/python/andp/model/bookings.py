@@ -273,7 +273,6 @@ def GetRecordedChannels(cursor):
         if channelDict.has_key(channelID[0]):
             channels.append(channelDict[channelID[0].split(",")[0].replace("(", "").replace(")", "")])
         else:
-            open("/tmp/debug.txt", "w").write(channelID[0].split(",")[1].replace("(", "").replace(")", ""))
             channels.append(channelDict[channelID[0].split(",")[1].replace("(", "").replace(")", "")])
             
     return channels

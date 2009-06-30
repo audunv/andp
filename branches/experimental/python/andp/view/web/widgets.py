@@ -246,6 +246,7 @@ class SelectWidget(Widget):
 
         html = '<select name="%s" id="%s">\n' % (self.name, self.name)
         for option, label in self.options:
+
             if option == selected:
                 html += '  <option value="%s" selected="1">%s</option>\n' % (option, label)
             else:            

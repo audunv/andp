@@ -246,6 +246,7 @@ class SelectWidget(Widget):
 
         html = '<select name="%s" id="%s">\n' % (self.name, self.name)
         for option, label in self.options:
+
             if option == selected:
                 html += '  <option value="%s" selected="1">%s</option>\n' % (option, label)
             else:            
@@ -262,12 +263,16 @@ class RadioWidget(Widget):
         super(self.__class__, self).__init__(parent, name, value)
 
         self.options = options
+        self.value = value
         
     def GetHTML(self, form = None):
         if form:
             selected = form.get(self.name, "")
         else:
-            selected = self.options[0][0]
+            if self.value == None:
+                selected = self.options[0][0]
+            else:
+                selected = self.value
 
         inputs = []
         for option, label in self.options:

@@ -302,7 +302,7 @@ class BookingsEdit(Page):
         widgets["endTime"]     = andp.view.web.widgets.TimeWidget(self, "endTime", value = eTuple[3:5])
         widgets["endDate"]     = andp.view.web.widgets.DateWidget(self, "endDate", value = eTuple[:3])
 
-        widgets["channel"]     = andp.view.web.widgets.SelectWidget(self, "channel", options = channels, value = booking.channelID)
+        widgets["channel"]     = andp.view.web.widgets.SelectWidget(self, "channel", options = channels, value = booking.channel.id)
         widgets["bType"]       = andp.view.web.widgets.RadioWidget(self, "bType", options = (("b", "Broadcast only"), ("br", "Broadcast and record")), value = bType)
         widgets["title"]       = andp.view.web.widgets.TextWidget(self, "title", cols = 40, value = booking.title)
         widgets["description"] = andp.view.web.widgets.TextWidget(self, "description", cols = 40, rows = 10, value = booking.title)

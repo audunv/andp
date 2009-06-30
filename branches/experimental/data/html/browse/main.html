@@ -5,17 +5,18 @@
   </head>
   <body>
     <h1>%(channel)s - %(curProgramme)s (Experimental channel browser)</h1>
-    <div class="browseleft">
+    <div>
       <form method="post" action="" name="switchForm">
 	%(channels)s
 	<input type="submit" name="switch" id="hidable" value="Switch to channel" />
       </form>
     <p><br /></p>  
-    %(today)s
     </div>
-    <div">
+    <div>
     %(view)s
     </div>
+    %(today)s
+
    <p><hr /></p>
    
    %(programme)s

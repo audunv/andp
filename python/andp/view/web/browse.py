@@ -107,7 +107,7 @@ class Browse(Page):
         return today[0]["title"][0][0].encode("utf-8")
 
     def CreateNowNextTable(self, listings):
-        outp = "<table><th></th><th>Start</th><th>Title</th>\n"
+        outp = "<table><th></th><th>Start</th><th>Title</th><th>Description</th>\n"
         listings.sort(self.CompareProgrammeListings("start"))
         today = []
         for item in listings:
@@ -131,8 +131,6 @@ class Browse(Page):
             bookLink = ""
             
             outp += u"""<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n""" % (item["time"], self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["start"])).strftime(self.timeformatnownext), item["title"][0][0], desc)
-#            outp += "<tr><td class='nownexttable' colspan=3>%s</td>" % desc
-            outp += "<tr><td colspan=3>&nbsp;</td>"
 
         outp += "</table>"
 

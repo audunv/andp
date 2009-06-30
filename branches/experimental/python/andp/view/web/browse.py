@@ -118,9 +118,9 @@ class Browse(Page):
 
         today.sort(self.CompareProgrammeListings("start"))
         now = today[0]
-        now["time"] = "Now"
+        now["time"] = "Current programme"
         next = today[1]
-        next["time"] = "Next"
+        next["time"] = "Next programme"
 
         for item in [now, next]:
             try:
@@ -130,9 +130,9 @@ class Browse(Page):
 
             bookLink = ""
             
-            outp += u"""<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n""" % (item["time"], self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["start"])).strftime(self.timeformatnownext), item["title"][0][0])
+            outp += u"""<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n""" % (item["time"], self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["start"])).strftime(self.timeformatnownext), item["title"][0][0], desc)
 #            outp += "<tr><td class='nownexttable' colspan=3>%s</td>" % desc
-#            outp += "<tr><td colspan=3>&nbsp;</td>"
+            outp += "<tr><td colspan=3>&nbsp;</td>"
 
         outp += "</table>"
 

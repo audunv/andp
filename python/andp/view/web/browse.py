@@ -76,7 +76,6 @@ class Browse(Page):
         html = self.LoadTemplate("main.html")
 
         html = html.replace("</head>", '<script type="text/javascript" src="/javascript/browse.js"></script>\n</head>').replace("<body>", '<body onload="remButton();">')
-        
 
         self.SendHeader()
         self.Write(html % d)
@@ -105,7 +104,7 @@ class Browse(Page):
             else:
                 today.append(item)
 
-        return today[0]["title"][0][0]
+        return today[0]["title"][0][0].encode("utf-8")
 
     def CreateNowNextTable(self, listings):
         outp = "<table><th></th><th>Start</th><th>Title</th>\n"
@@ -125,19 +124,19 @@ class Browse(Page):
 
         for item in [now, next]:
             try:
-                desc = item["desc"][0][0].encode("UTF-8")
+                desc = item["desc"][0][0]
             except KeyError:
                 desc = ""
 
             bookLink = ""
             
-            outp += """<tr><td>%s</td><td>%s</td><td onMouseover="ddrivetip('%s')" onMouseout="hideddrivetip()"><a href="%s">%s</a></td></tr>\n""" % (item["time"], self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["start"])).strftime(self.timeformatnownext), desc.replace("'", "\'"), bookLink,item["title"][0][0].encode("UTF-8"))
+            outp += u"""<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n""" % (item["time"], self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["start"])).strftime(self.timeformatnownext), item["title"][0][0])
 #            outp += "<tr><td class='nownexttable' colspan=3>%s</td>" % desc
 #            outp += "<tr><td colspan=3>&nbsp;</td>"
 
         outp += "</table>"
 
-        return outp
+        return outp     
 
     def ConvertXMLTVTimeToUTC(self, xmltv):
         utctime = datetime.datetime.strptime(xmltv[:-6], "%Y%m%d%H%M%S")
@@ -155,7 +154,7 @@ class Browse(Page):
         listings.sort(self.CompareProgrammeListings("start"))
         for item in listings:
             try:
-                desc = item["desc"][0][0].encode("UTF-8")
+                desc = item["desc"][0][0]
             except KeyError:
                 desc = ""
 
@@ -167,11 +166,12 @@ class Browse(Page):
                 if datetime.datetime.strptime(item["stop"][:-6], "%Y%m%d%H%M%S") > datetime.datetime.today() + datetime.timedelta(1):
                     continue
                 
-            outp += "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n" % (self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["start"])).strftime(self.timeformat), self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["stop"])).strftime(self.timeformat), item["title"][0][0].encode("UTF-8"), desc)
+            outp += u"<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n" % (self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["start"])).strftime(self.timeformat), self.timezonehandler.localize(self.ConvertXMLTVTimeToUTC(item["stop"])).strftime(self.timeformat), item["title"][0][0], desc)
 
         outp += "</table>"
-        return outp
 
+        return outp
+        
     def GetChannelListings(self, channelname):
         channelname = channelname.replace("%20", " ")
         xmltv.locale = "UTF-8"

@@ -557,7 +557,7 @@ class Page(object):
         else:
             fsPath = os.path.join(self.htmlRoot, self.GetFSPath())
 
-        html = open(fsPath).read()
+        html = unicode(open(fsPath).read(), "utf-8")
 
         title = self.reTitle.findall(html)[0]
         body  = self.reBody.findall(html)[0]
@@ -620,7 +620,7 @@ class Page(object):
 
         """
 
-        self.req.write(s)
+        self.req.write(s.encode("utf-8"))
 
     def Redirect(self, target, permanent = False):
         """

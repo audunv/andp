@@ -99,6 +99,7 @@ def PerformBroadcast(cfg, conn, cursor, booking):
         uri = tuner.GetTSURL()
 
         if booking.record:
+            # Encapsulate using PS, to avoid timestamp problems
             cmd = ("vlc", "-I", "dummy", "%s" % uri, "--sout-all", "--sout-udp-ttl", "10", "--sout", "#duplicate{dst=standard{mux=ts,dst=%s,access=rtp},dst=standard{access=file,mux=ps,dst=%s.mpg}}" % (tuner.mcGroup, outBasePath))
         else:
             cmd = ("vlc", "-I", "dummy", "%s" % uri, "--sout-all", "--sout-udp-ttl", "10", "--sout", "#standard{mux=ts,dst=%s,access=rtp}" % tuner.mcGroup)
